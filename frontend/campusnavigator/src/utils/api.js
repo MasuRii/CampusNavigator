@@ -1,4 +1,3 @@
-// src/utils/api.js
 
 const BASE_URL = 'http://localhost:8080/api';
 
@@ -28,7 +27,6 @@ export async function apiRequest(endpoint, method = 'GET', body = null) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        // For DELETE requests or empty responses, return success without parsing JSON
         if (method === 'DELETE' || response.status === 204) {
             return { success: true };
         }
