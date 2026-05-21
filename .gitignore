@@ -60,3 +60,6 @@ supabase/
 
 # Cloudflare Wrangler local state (contains account credentials)
 .wrangler/
+
+# Generated test reports
+docs/reports/test/
