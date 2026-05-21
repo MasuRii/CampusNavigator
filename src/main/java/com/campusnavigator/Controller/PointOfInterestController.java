@@ -4,15 +4,16 @@ import com.campusnavigator.Entity.Building;
 import com.campusnavigator.Entity.PointOfInterest;
 import com.campusnavigator.Service.BuildingService;
 import com.campusnavigator.Service.PointOfInterestService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/pois")
-@CrossOrigin
 public class PointOfInterestController {
     private final PointOfInterestService poiService;
     private final BuildingService buildingService;
@@ -23,19 +24,16 @@ public class PointOfInterestController {
     }
 
     @PostMapping
-    public ResponseEntity<PointOfInterest> createPointOfInterest(@RequestBody Map<String, Object> request) {
-        Long buildingId = Long.valueOf(request.get("buildingId").toString());
-        Building building = buildingService.getBuildingById(buildingId)
-                .orElseThrow(() -> new RuntimeException("Building not found with id " + buildingId));
-
-        PointOfInterest poi = new PointOfInterest();
-        poi.setName(request.get("name").toString());
-        poi.setDescription(request.get("description").toString());
-        poi.setType(request.get("type").toString());
-        poi.setBuilding(building);
-
-        PointOfInterest createdPOI = poiService.createPointOfInterest(poi);
-        return ResponseEntity.ok(createdPOI);
+    public ResponseEntity<?> createPointOfInterest(@RequestBody(required = false) Map<String, Object> request) {
+        try {
+            PointOfInterest poi = buildPointOfInterest(request);
+            PointOfInterest createdPOI = poiService.createPointOfInterest(poi);
+            return ResponseEntity.ok(createdPOI);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        } catch (NoSuchElementException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+        }
     }
 
     @GetMapping
@@ -51,23 +49,16 @@ public class PointOfInterestController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PointOfInterest> updatePointOfInterest(@PathVariable Long id,
-            @RequestBody Map<String, Object> request) {
+    public ResponseEntity<?> updatePointOfInterest(@PathVariable Long id,
+            @RequestBody(required = false) Map<String, Object> request) {
         try {
-            Long buildingId = Long.valueOf(request.get("buildingId").toString());
-            Building building = buildingService.getBuildingById(buildingId)
-                    .orElseThrow(() -> new RuntimeException("Building not found with id " + buildingId));
-
-            PointOfInterest poiDetails = new PointOfInterest();
-            poiDetails.setName(request.get("name").toString());
-            poiDetails.setDescription(request.get("description").toString());
-            poiDetails.setType(request.get("type").toString());
-            poiDetails.setBuilding(building);
-
+            PointOfInterest poiDetails = buildPointOfInterest(request);
             PointOfInterest updatedPOI = poiService.updatePointOfInterest(id, poiDetails);
             return ResponseEntity.ok(updatedPOI);
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        } catch (NoSuchElementException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
         }
     }
 
@@ -76,8 +67,38 @@ public class PointOfInterestController {
         try {
             poiService.deletePointOfInterest(id);
             return ResponseEntity.noContent().build();
-        } catch (Exception e) {
+        } catch (NoSuchElementException e) {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    private PointOfInterest buildPointOfInterest(Map<String, Object> request) {
+        Long buildingId = requiredLong(request, "buildingId");
+        Building building = buildingService.getBuildingById(buildingId)
+                .orElseThrow(() -> new NoSuchElementException("Building not found with id " + buildingId));
+
+        PointOfInterest poi = new PointOfInterest();
+        poi.setName(requiredString(request, "name"));
+        poi.setDescription(requiredString(request, "description"));
+        poi.setType(requiredString(request, "type"));
+        poi.setBuilding(building);
+        return poi;
+    }
+
+    private Long requiredLong(Map<String, Object> request, String fieldName) {
+        String value = requiredString(request, fieldName);
+        try {
+            return Long.valueOf(value);
+        } catch (NumberFormatException ex) {
+            throw new IllegalArgumentException(fieldName + " must be a valid number.");
+        }
+    }
+
+    private String requiredString(Map<String, Object> request, String fieldName) {
+        if (request == null || !request.containsKey(fieldName) || request.get(fieldName) == null
+                || request.get(fieldName).toString().trim().isEmpty()) {
+            throw new IllegalArgumentException(fieldName + " is required.");
+        }
+        return request.get(fieldName).toString().trim();
     }
 }
