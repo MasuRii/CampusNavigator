@@ -2,6 +2,7 @@ package com.campusnavigator.Entity;
 
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -21,6 +22,7 @@ public class User {
     private String name;
     private String role;
     private String email;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     private boolean admin;
 
