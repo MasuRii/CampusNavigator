@@ -10,7 +10,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/event")
-@CrossOrigin(origins = "http://localhost:3000") // Match your React app's URL
 public class EventController {
     @Autowired
     private EventService eventService;
