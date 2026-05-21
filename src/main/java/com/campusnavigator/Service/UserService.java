@@ -5,6 +5,7 @@ import java.util.List;
 import javax.naming.NameAlreadyBoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.campusnavigator.Entity.User;
@@ -17,12 +18,17 @@ public class UserService {
     UserRepository urepo;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     public UserService(){
         super();
     }
 //create
     public User postUserRecord(User user){
+        if (user.getPassword() != null) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
         return urepo.save(user);
     }
 //read
@@ -39,7 +45,7 @@ public class UserService {
         search = urepo.findById(userID).get();
 
        
-        search.setPassword(newUser.getPassword());
+        search.setPassword(encodePassword(newUser.getPassword()));
 
     } catch (NoClassDefFoundError nex){
         throw new NameAlreadyBoundException("Search UserID: " + userID + " not found");
@@ -62,7 +68,7 @@ public User putUser(int userID, User newUser) {
         existingUser.setEmail(newUser.getEmail());
     }
     if (newUser.getPassword() != null) {
-        existingUser.setPassword(newUser.getPassword());
+        existingUser.setPassword(encodePassword(newUser.getPassword()));
     }
     if (newUser.getRole() != null) {
         existingUser.setRole(newUser.getRole());
@@ -72,7 +78,29 @@ public User putUser(int userID, User newUser) {
     
     // Save and return the updated user
     return userRepository.save(existingUser);
-}
+    }
+    public User authenticateUser(String email, String password) {
+        if (email == null || password == null) {
+            return null;
+        }
+
+        User user = userRepository.findByEmail(email);
+        if (user != null && user.getPassword() != null && passwordEncoder.matches(password, user.getPassword())) {
+            return user;
+        }
+
+        return null;
+    }
+
+    public User authenticateAdmin(String email, String password) {
+        User user = authenticateUser(email, password);
+        return user != null && user.isAdmin() ? user : null;
+    }
+
+    private String encodePassword(String password) {
+        return password == null ? null : passwordEncoder.encode(password);
+    }
+
 //delete
 public String deleteUser(int userID)
 {
