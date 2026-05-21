@@ -1,5 +1,9 @@
+const DEFAULT_API_BASE_URL =
+    process.env.NODE_ENV === 'development'
+        ? `${window.location.protocol}//${window.location.hostname}:8080/api`
+        : '/api';
 
-const BASE_URL = 'http://localhost:8080/api';
+export const API_BASE_URL = (process.env.REACT_APP_API_BASE_URL || DEFAULT_API_BASE_URL).replace(/\/+$/, '');
 
 export async function apiRequest(endpoint, method = 'GET', body = null) {
     try {
@@ -19,7 +23,7 @@ export async function apiRequest(endpoint, method = 'GET', body = null) {
         }
 
         const cleanEndpoint = endpoint.replace(/^\/+/, '');
-        const url = `${BASE_URL}/${cleanEndpoint}`;
+        const url = `${API_BASE_URL}/${cleanEndpoint}`;
 
         const response = await fetch(url, config);
 
