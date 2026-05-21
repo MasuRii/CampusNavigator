@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { FaBell, FaSearch } from "react-icons/fa";
+import { API_BASE_URL } from "../utils/api";
 
 const IncidentReport = () => {
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ const IncidentReport = () => {
   // Removed searchResults and related functions as per instruction
   const searchRef = useRef(null);
 
-  const apiBaseURL = "http://localhost:8080/api/incidentreport";
+  const apiBaseURL = `${API_BASE_URL}/incidentreport`;
 
   // User Authentication and Data Fetching
   useEffect(() => {
@@ -37,7 +38,7 @@ const IncidentReport = () => {
     } else {
       // Fetch all users to get the current user's admin status
       axios
-        .get("http://localhost:8080/api/user/getAllSearch")
+        .get(`${API_BASE_URL}/user/getAllSearch`)
         .then((response) => {
           const usersData = response.data;
           // Find the current user in the list

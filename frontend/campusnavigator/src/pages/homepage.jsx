@@ -14,6 +14,7 @@ import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import { FaBell } from "react-icons/fa";
+import { API_BASE_URL } from "../utils/api";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -77,7 +78,7 @@ const HomePage = () => {
       navigate("/login");
     } else {
       // Fetch all users to get the current user's admin status
-      fetch("http://localhost:8080/api/user/getAllSearch")
+      fetch(`${API_BASE_URL}/user/getAllSearch`)
         .then((response) => response.json())
         .then((usersData) => {
           // Find the current user in the list
@@ -100,7 +101,7 @@ const HomePage = () => {
   }, [navigate]);
 
   useEffect(() => {
-    fetch("http://localhost:8080/api/buildings")
+    fetch(`${API_BASE_URL}/buildings`)
       .then((response) => response.json())
       .then((data) => {
         setBuildings(data);
@@ -117,7 +118,7 @@ const HomePage = () => {
 
       // Fetch geolocation data for the current user
       fetch(
-        `http://localhost:8080/api/geolocation/getGeolocationByUser/${user.userID}`
+        `${API_BASE_URL}/geolocation/getGeolocationByUser/${user.userID}`
       )
         .then((response) => {
           if (response.ok) {
@@ -132,7 +133,7 @@ const HomePage = () => {
             };
 
             return fetch(
-              "http://localhost:8080/api/geolocation/postGeolocation",
+              `${API_BASE_URL}/geolocation/postGeolocation`,
               {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -254,7 +255,7 @@ const HomePage = () => {
       searchText: text,
       timeStamp: new Date().toISOString(),
     };
-    fetch("http://localhost:8080/api/search/postSearchEntity", {
+    fetch(`${API_BASE_URL}/search/postSearchEntity`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
@@ -303,7 +304,7 @@ const HomePage = () => {
           userID: user.userID,
         };
         fetch(
-          `http://localhost:8080/api/geolocation/putGeolocation/${userGeolocationId}`,
+          `${API_BASE_URL}/geolocation/putGeolocation/${userGeolocationId}`,
           {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
@@ -346,7 +347,7 @@ const HomePage = () => {
         mapImageURL: newBuildingData.mapImageURL,
       },
     };
-    fetch("http://localhost:8080/api/buildings", {
+    fetch(`${API_BASE_URL}/buildings`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
@@ -361,11 +362,11 @@ const HomePage = () => {
   };
 
   const handleDeleteBuilding = (buildingID, mapID) => {
-    fetch(`http://localhost:8080/api/buildings/${buildingID}`, {
+    fetch(`${API_BASE_URL}/buildings/${buildingID}`, {
       method: "DELETE",
     })
       .then(() => {
-        fetch(`http://localhost:8080/api/maps/${mapID}`, {
+        fetch(`${API_BASE_URL}/maps/${mapID}`, {
           method: "DELETE",
         }).catch((error) => console.error("Error deleting map data:", error));
         setBuildings((prevBuildings) =>
@@ -392,7 +393,7 @@ const HomePage = () => {
       description: newPOIData.description,
       type: newPOIData.type,
     };
-    fetch("http://localhost:8080/api/pois", {
+    fetch(`${API_BASE_URL}/pois`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
@@ -409,7 +410,7 @@ const HomePage = () => {
   };
 
   const handleDeletePOI = (poiID) => {
-    fetch(`http://localhost:8080/api/pois/${poiID}`, {
+    fetch(`${API_BASE_URL}/pois/${poiID}`, {
       method: "DELETE",
     })
       .then(() => {
@@ -446,7 +447,7 @@ const HomePage = () => {
       description: editPOIData.description,
       type: editPOIData.type,
     };
-    fetch(`http://localhost:8080/api/pois/${editingPOI.poi_ID}`, {
+    fetch(`${API_BASE_URL}/pois/${editingPOI.poi_ID}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),

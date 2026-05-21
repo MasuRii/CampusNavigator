@@ -3,6 +3,7 @@ import axios from "axios";
 import { Helmet } from "react-helmet";
 import { Link, useNavigate } from "react-router-dom";
 import { FaSearch, FaBell } from "react-icons/fa";
+import { API_BASE_URL } from "../utils/api";
 
 const AnnouncementApp = () => {
   // State management
@@ -27,7 +28,7 @@ const AnnouncementApp = () => {
     } else {
       // Fetch all users to get the current user's admin status
       axios
-        .get("http://localhost:8080/api/user/getAllSearch")
+        .get(`${API_BASE_URL}/user/getAllSearch`)
         .then((response) => {
           const usersData = response.data;
           // Find the current user in the list

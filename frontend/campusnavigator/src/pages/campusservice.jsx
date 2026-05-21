@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom"; // Ensure react-router-dom is installed
 import { FaBell } from "react-icons/fa"; // Ensure react-icons is installed
+import { API_BASE_URL } from "../utils/api";
 
 const CampusServicePage = () => {
   const [services, setServices] = useState([]);
@@ -24,7 +25,7 @@ const CampusServicePage = () => {
   // Fetch Campus Services on Component Mount
   useEffect(() => {
     axios
-      .get("http://localhost:8080/api/campusservice")
+      .get(`${API_BASE_URL}/campusservice`)
       .then((response) => setServices(response.data))
       .catch((error) => console.error("Error fetching services:", error));
   }, []);
@@ -37,7 +38,7 @@ const CampusServicePage = () => {
     } else {
       // Fetch all users to get the current user's admin status
       axios
-        .get("http://localhost:8080/api/user/getAllSearch")
+        .get(`${API_BASE_URL}/user/getAllSearch`)
         .then((response) => {
           const usersData = response.data;
           // Find the current user in the list
@@ -72,7 +73,7 @@ const CampusServicePage = () => {
   // Add a new service
   const handleAddService = () => {
     axios
-      .post("http://localhost:8080/api/campusservice", newService)
+      .post(`${API_BASE_URL}/campusservice`, newService)
       .then((response) => {
         setServices((prev) => [...prev, response.data]);
         setNewService({
@@ -95,7 +96,7 @@ const CampusServicePage = () => {
       return;
     }
     axios
-      .delete(`http://localhost:8080/api/campusservice/${serviceID}`)
+      .delete(`${API_BASE_URL}/campusservice/${serviceID}`)
       .then(() => {
         setServices((prev) =>
           prev.filter((service) => service.serviceID !== serviceID)
@@ -112,7 +113,7 @@ const CampusServicePage = () => {
     }
     axios
       .put(
-        `http://localhost:8080/api/campusservice/${editService.serviceID}`,
+        `${API_BASE_URL}/campusservice/${editService.serviceID}`,
         editService
       )
       .then((response) => {

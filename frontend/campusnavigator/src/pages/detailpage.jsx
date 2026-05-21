@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaSearch, FaBell } from 'react-icons/fa';
+import { API_BASE_URL } from "../utils/api";
 
 const App = () => {
   return (
@@ -28,7 +29,7 @@ const Header = () => {
       navigate("/login");
     } else {
       // Fetch all users to get the current user's data
-      fetch("http://localhost:8080/api/user/getAllSearch")
+      fetch(`${API_BASE_URL}/user/getAllSearch`)
         .then((response) => response.json())
         .then((usersData) => {
           // Find the current user in the list
@@ -322,7 +323,7 @@ const BuildingList = () => {
 
   useEffect(() => {
     // Fetch buildings data from the API
-    fetch('http://localhost:8080/api/buildings')
+    fetch(`${API_BASE_URL}/buildings`)
       .then((response) => response.json())
       .then((data) => {
         setBuildings(data);
@@ -380,7 +381,7 @@ const BuildingDetails = ({ building, buildings, onBack }) => {
       console.error("No user data found in localStorage");
       // Optionally navigate to login or handle accordingly
     } else {
-      fetch("http://localhost:8080/api/user/getAllSearch")
+      fetch(`${API_BASE_URL}/user/getAllSearch`)
         .then((response) => response.json())
         .then((usersData) => {
           // Find the current user in the list

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./signup.css";
+import { API_BASE_URL } from "../utils/api";
 
 const backgroundImages = [
   "/backgroundimg/Accreditation-Room.jpg",
@@ -41,7 +42,7 @@ const Signup = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:8080/api/user/postUserEntity",
+        `${API_BASE_URL}/user/postUserEntity`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -66,7 +67,7 @@ const Signup = () => {
 
       try {
         const geoResponse = await fetch(
-          "http://localhost:8080/api/geolocation/postGeolocation",
+          `${API_BASE_URL}/geolocation/postGeolocation`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },

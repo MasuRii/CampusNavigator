@@ -10,6 +10,7 @@ import {
 import { Helmet } from "react-helmet";
 import { Link, useNavigate } from "react-router-dom";
 import { FaSearch, FaBell } from "react-icons/fa";
+import { API_BASE_URL } from "../utils/api";
 
 const FeedbackForm = () => {
   const [message, setMessage] = useState("");
@@ -26,7 +27,7 @@ const FeedbackForm = () => {
       navigate("/login"); // Redirect to login if no local user data
     } else {
       // Fetch all users to get the current user's full data
-      fetch("http://localhost:8080/api/user/getAllSearch")
+      fetch(`${API_BASE_URL}/user/getAllSearch`)
         .then((response) => response.json())
         .then((usersData) => {
           // Find the current user in the list
@@ -53,7 +54,7 @@ const FeedbackForm = () => {
     const feedback = { message, timeStamp };
     console.log(feedback);
 
-    fetch("http://localhost:8080/api/feedback/postFeedback", {
+    fetch(`${API_BASE_URL}/feedback/postFeedback`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(feedback),

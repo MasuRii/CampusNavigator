@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { FaSearch, FaBell } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "../utils/api";
 
 function UserProfilePage() {
   const [searchText, setSearchText] = useState("");
@@ -34,7 +35,7 @@ function UserProfilePage() {
   }, [navigate]);
 
   useEffect(() => {
-    fetch("http://localhost:8080/api/buildings")
+    fetch(`${API_BASE_URL}/buildings`)
       .then((response) => response.json())
       .then((data) => {
         setBuildings(data);
@@ -67,7 +68,7 @@ function UserProfilePage() {
 
   useEffect(() => {
     // Fetch all users' data from the API
-    fetch("http://127.0.0.1:8080/api/user/getAllSearch")
+    fetch(`${API_BASE_URL}/user/getAllSearch`)
       .then((response) => response.json())
       .then((data) => {
         setAllUsersData(data);
@@ -101,7 +102,7 @@ function UserProfilePage() {
     const update = {name, email, role}
     console.log(update)
 
-    fetch(`http://localhost:8080/api/user/putUserRecord?userID=${userData.userID}`,
+    fetch(`${API_BASE_URL}/user/putUserRecord/${userData.userID}`,
       {
         method: "PUT",
         headers: {"Content-Type": "application/json"},
@@ -150,11 +151,8 @@ function UserProfilePage() {
   const handleSaveChanges = (e) => {
     e.preventDefault();
 
-    const newPassword = { password };
-    console.log(newPassword);
-
     fetch(
-      `http://localhost:8080/api/user/putUserRecord?userID=${userData.userID}`,
+      `${API_BASE_URL}/user/putUserRecord/${userData.userID}`,
       {
         method: "PUT",
         headers: {
@@ -162,6 +160,7 @@ function UserProfilePage() {
         },
         body: JSON.stringify({
           password: password,
+          admin: userData.admin,
         }),
       }
     ).then(() => {

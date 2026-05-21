@@ -8,8 +8,9 @@ import Modal from "react-bootstrap/Modal";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./events.css";
+import { API_BASE_URL } from "../utils/api";
 
-const BASE_URL = "http://localhost:8080/api/event";
+const BASE_URL = `${API_BASE_URL}/event`;
 const localizer = momentLocalizer(moment);
 
 const Event = () => {
@@ -64,7 +65,7 @@ const Event = () => {
     } else {
       // Fetch all users to get the current user's admin status
       axios
-        .get("http://localhost:8080/api/user/getAllSearch")
+        .get(`${API_BASE_URL}/user/getAllSearch`)
         .then((response) => {
           const usersData = response.data;
           // Find the current user in the list

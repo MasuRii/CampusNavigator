@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaSearch, FaBell } from "react-icons/fa";
 import axios from "axios";
 import "./notification.css";
+import { API_BASE_URL } from "../utils/api";
 
 const Notifications = () => {
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ const Notifications = () => {
     } else {
       // Fetch all users to get the current user's admin status
       axios
-        .get("http://localhost:8080/api/user/getAllSearch")
+        .get(`${API_BASE_URL}/user/getAllSearch`)
         .then((response) => {
           const usersData = response.data;
           const fullUserData = usersData.find(
@@ -55,16 +56,16 @@ const Notifications = () => {
     const fetchBuildingsAndNotifications = async () => {
       try {
         const buildingsResponse = await axios.get(
-          "http://localhost:8080/api/buildings"
+          `${API_BASE_URL}/buildings`
         );
         setBuildings(buildingsResponse.data);
         const eventsResponse = await axios.get(
-          "http://127.0.0.1:8080/api/event/getAllEvents"
+          `${API_BASE_URL}/event/getAllEvents`
         );
         setBuildings(buildingsResponse.data);
 
         const existingNotifications = await axios.get(
-          "http://localhost:8080/api/notifications"
+          `${API_BASE_URL}/notifications`
         );
         const existingMessages = existingNotifications.data.map(
           (n) => n.message
@@ -74,7 +75,7 @@ const Notifications = () => {
           const message = `Building "${building.name}" has been added.`;
           if (!existingMessages.includes(message)) {
             await axios.post(
-              "http://localhost:8080/api/notifications",
+              `${API_BASE_URL}/notifications`,
               message,
               {
                 headers: {
@@ -90,7 +91,7 @@ const Notifications = () => {
           const eventMessage = `New event "${event.name}" has been created.`;
           if (!existingMessages.includes(eventMessage)) {
             await axios.post(
-              "http://localhost:8080/api/notifications",
+              `${API_BASE_URL}/notifications`,
               eventMessage,
               {
                 headers: {
@@ -120,12 +121,12 @@ const Notifications = () => {
     const handleBuildingDelete = async (buildingId, buildingName) => {
       try {
         // Delete the building
-        await axios.delete(`http://localhost:8080/api/buildings/${buildingId}`);
+        await axios.delete(`${API_BASE_URL}/buildings/${buildingId}`);
 
         // Create notification for building deletion
         const deletionMessage = `Building "${buildingName}" has been deleted.`;
         await axios.post(
-          "http://localhost:8080/api/notifications",
+          `${API_BASE_URL}/notifications`,
           deletionMessage,
           {
             headers: {
@@ -136,7 +137,7 @@ const Notifications = () => {
 
         // Refresh notifications list
         const response = await axios.get(
-          "http://localhost:8080/api/notifications"
+          `${API_BASE_URL}/notifications`
         );
         const filteredNotifications = response.data
           .filter(
@@ -159,7 +160,7 @@ const Notifications = () => {
     try {
       const deletionPromises = notifications.map((notification) =>
         axios.delete(
-          `http://localhost:8080/api/notifications/${notification.notificationId}`
+          `${API_BASE_URL}/notifications/${notification.notificationId}`
         )
       );
 
@@ -187,7 +188,7 @@ const Notifications = () => {
   const deleteNotification = async (notificationId) => {
     try {
       await axios.delete(
-        `http://localhost:8080/api/notifications/${notificationId}`
+        `${API_BASE_URL}/notifications/${notificationId}`
       );
 
       const updatedDeletedIds = [...deletedNotificationIds, notificationId];
@@ -209,7 +210,7 @@ const Notifications = () => {
   const markAsRead = async (notificationId) => {
     try {
       await axios.put(
-        `http://localhost:8080/api/notifications/${notificationId}/read`
+        `${API_BASE_URL}/notifications/${notificationId}/read`
       );
       // Update the notification in the current state
       setNotifications(
@@ -223,12 +224,12 @@ const Notifications = () => {
   const handleBuildingDelete = async (buildingId, buildingName) => {
     try {
       // Delete the building
-      await axios.delete(`http://localhost:8080/api/buildings/${buildingId}`);
+      await axios.delete(`${API_BASE_URL}/buildings/${buildingId}`);
 
       // Create notification for building deletion
       const deletionMessage = `Building "${buildingName}" has been deleted.`;
       await axios.post(
-        "http://localhost:8080/api/notifications",
+        `${API_BASE_URL}/notifications`,
         deletionMessage,
         {
           headers: {
@@ -239,7 +240,7 @@ const Notifications = () => {
 
       // Refresh notifications list
       const response = await axios.get(
-        "http://localhost:8080/api/notifications"
+        `${API_BASE_URL}/notifications`
       );
       const filteredNotifications = response.data
         .filter(
