@@ -1,5 +1,7 @@
 # CIT-U Campus Navigator
 
+**Live Demo:** [https://campusnavigator.masurii.dev](https://campusnavigator.masurii.dev)
+
 ![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
@@ -87,6 +89,12 @@ Built with modern technologies such as **ReactJS**, **Spring Boot**, and **MySQL
    - Develop the frontend using **ReactJS** for optimal user interface components.
    - Utilize **Spring Boot** for efficient server-side operations.
    - Employ **MySQL** as the database to store map data, building information, and other relevant data.
+
+### Deployed Stack (Production)
+
+- **Frontend (Vercel):** [https://campusnavigator.masurii.dev](https://campusnavigator.masurii.dev)
+- **Backend API (Render):** [https://campusnavigator-api.onrender.com/api](https://campusnavigator-api.onrender.com/api)
+- **Database:** Managed database connected via secure environment variables (no secrets exposed in code).
 
 7. **Scalability for Future Enhancements:**
    - Design the system architecture to accommodate future features like 3D mapping and offline capabilities without significant restructuring.
@@ -215,10 +223,11 @@ Ensure you have the following installed on your machine:
      yarn start
      ```
 
-5. **Access the Application:**
+5. **Access the Application (local):**
 
    - Open your web browser and navigate to `http://localhost:3000` to view the frontend.
    - The backend API is accessible at `http://localhost:8080`.
+   - To use the production environment, open the [live demo](https://campusnavigator.masurii.dev).
 
 ---
 
