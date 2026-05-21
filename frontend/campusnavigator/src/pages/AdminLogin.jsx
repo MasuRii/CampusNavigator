@@ -40,18 +40,11 @@ const AdminLogin = () => {
     }
 
     try {
-      const users = await apiRequest('user/getAllSearch', 'GET');
-      const adminUser = users.find(
-        (user) => user.email === email && user.password === password && user.admin
-      );
-      if (adminUser) {
-        authenticateAdmin(adminUser);
-        navigate('/admin/dashboard');
-      } else {
-        setError('Invalid email, password, or you are not an admin.');
-      }
+      const adminUser = await apiRequest('user/admin/login', 'POST', { email, password });
+      authenticateAdmin(adminUser);
+      navigate('/admin/dashboard');
     } catch (err) {
-      setError('Error fetching user data.');
+      setError('Invalid email, password, or you are not an admin.');
       console.error(err);
     }
   };

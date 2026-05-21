@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./signup.css";
 import "./login.css";
+import { apiRequest } from "../utils/api";
 
 const backgroundImages = [
   "/backgroundimg/Accreditation-Room.jpg",
@@ -39,26 +40,13 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(
-        "http://localhost:8080/api/user/getAllSearch"
-      );
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const users = await response.json();
-      const user = users.find(
-        (user) => user.email === email && user.password === password
-      );
+      const user = await apiRequest("user/login", "POST", { email, password });
 
-      if (user) {
-        localStorage.setItem("user", JSON.stringify(user));
-        navigate("/homepage");
-      } else {
-        setErrorMessage("Invalid email or password. Please try again.");
-      }
+      localStorage.setItem("user", JSON.stringify(user));
+      navigate("/homepage");
     } catch (error) {
-      console.error("Failed to fetch:", error);
-      setErrorMessage("An error occurred. Please try again later.");
+      console.error("Login failed:", error);
+      setErrorMessage("Invalid email or password. Please try again.");
     }
   };
 
