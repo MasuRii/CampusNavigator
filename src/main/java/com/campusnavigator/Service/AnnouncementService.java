@@ -1,74 +1,89 @@
 package com.campusnavigator.Service;
 
 import java.util.List;
-
-import javax.naming.NameNotFoundException;
+import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import com.campusnavigator.Entity.AnnouncementEntity;
 import com.campusnavigator.Repository.AnnouncementRepository;
 
 @Service
 public class AnnouncementService {
+    private static final int MAX_TEXT_LENGTH = 255;
+
     @Autowired
     AnnouncementRepository arepo;
 
-    public AnnouncementService()
-    {
+    public AnnouncementService() {
         super();
     }
 
     //CREATE
-    public AnnouncementEntity postAnnouncement(AnnouncementEntity announce)
-    {
+    public AnnouncementEntity postAnnouncement(AnnouncementEntity announce) {
+        validateAnnouncement(announce);
         return arepo.save(announce);
     }
 
     //READ
-    public List<AnnouncementEntity>getAllAnnouncement()
-    {
+    public List<AnnouncementEntity> getAllAnnouncement() {
         return arepo.findAll();
     }
 
     //UPDATE
-    @SuppressWarnings("finally")
-    public AnnouncementEntity putAnnouncement(int announcementID, AnnouncementEntity newAnnouncementEntity)
-    {
-        AnnouncementEntity announcement = new AnnouncementEntity();
+    public AnnouncementEntity putAnnouncement(int announcementID, AnnouncementEntity newAnnouncementEntity) {
+        validateAnnouncement(newAnnouncementEntity);
 
-        try {
-            announcement = arepo.findById(announcementID).get();
+        AnnouncementEntity announcement = arepo.findById(announcementID)
+                .orElseThrow(() -> new NoSuchElementException("Announcement ID: " + announcementID + " not found!"));
 
-            announcement.setTitle(newAnnouncementEntity.getTitle());
-            announcement.setContent(newAnnouncementEntity.getContent());
-        } catch (Exception e) {
-            throw new NameNotFoundException("Announcement ID: " + announcementID + " not found!");
-        }finally{
-            return arepo.save(announcement);
-        }
+        announcement.setTitle(newAnnouncementEntity.getTitle().trim());
+        announcement.setContent(newAnnouncementEntity.getContent().trim());
+        announcement.setCategory(trimToNull(newAnnouncementEntity.getCategory()));
+        announcement.setPostedBy(newAnnouncementEntity.getPostedBy());
+        announcement.setPostTimeStamp(newAnnouncementEntity.getPostTimeStamp());
+
+        return arepo.save(announcement);
     }
 
     //DELETE
-    @SuppressWarnings("unused")
-    public String deleteAnnouncement(int announcementID)
-    {
-        String msg = "";
-
-        if(arepo.findById(announcementID) != null)
-        {
-            arepo.deleteById(announcementID);
-            msg = "Announcement Successfully Deleted!";
+    public String deleteAnnouncement(int announcementID) {
+        if (!arepo.existsById(announcementID)) {
+            throw new NoSuchElementException("Announcement ID: " + announcementID + " not found!");
         }
-        else
-        {
-            msg = announcementID + " not found!";
+
+        arepo.deleteById(announcementID);
+        return "Announcement Successfully Deleted!";
+    }
+
+    private void validateAnnouncement(AnnouncementEntity announcement) {
+        if (announcement == null) {
+            throw new IllegalArgumentException("Announcement payload is required.");
         }
-          
-        return msg;
+        validateRequiredText(announcement.getTitle(), "title");
+        validateRequiredText(announcement.getContent(), "content");
+        validateOptionalText(announcement.getCategory(), "category");
+    }
 
+    private void validateRequiredText(String value, String fieldName) {
+        if (value == null || value.trim().isEmpty()) {
+            throw new IllegalArgumentException("Announcement " + fieldName + " is required.");
+        }
+        validateOptionalText(value, fieldName);
+    }
 
+    private void validateOptionalText(String value, String fieldName) {
+        if (value != null && value.length() > MAX_TEXT_LENGTH) {
+            throw new IllegalArgumentException("Announcement " + fieldName + " must be " + MAX_TEXT_LENGTH + " characters or less.");
+        }
+    }
+
+    private String trimToNull(String value) {
+        if (value == null) {
+            return null;
+        }
+        String trimmed = value.trim();
+        return trimmed.isEmpty() ? null : trimmed;
     }
 }

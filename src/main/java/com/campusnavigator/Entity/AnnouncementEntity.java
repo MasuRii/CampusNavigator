@@ -1,7 +1,8 @@
 package com.campusnavigator.Entity;
 
 import java.security.Timestamp;
-import java.time.DateTimeException;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,6 +18,7 @@ public class AnnouncementEntity {
     private String title;
     private String content;
     private int postedBy;
+    @JsonIgnore
     private Timestamp postTimeStamp;
     private String category;
 
