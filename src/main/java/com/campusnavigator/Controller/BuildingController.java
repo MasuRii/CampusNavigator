@@ -9,7 +9,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/buildings")
-@CrossOrigin
 public class BuildingController {
     private final BuildingService buildingService;
 
