@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -33,7 +34,7 @@ public class EventService {
     @Transactional
     public Event updateEvent(Long id, Event eventDetails) {
         Event existingEvent = eventRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Event not found with id: " + id));
+            .orElseThrow(() -> new NoSuchElementException("Event not found with id: " + id));
 
         // Update only mutable fields
         existingEvent.setName(eventDetails.getName());
@@ -51,7 +52,7 @@ public class EventService {
     @Transactional
     public void deleteEvent(Long id) {
         Event event = eventRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Event not found with id: " + id));
+            .orElseThrow(() -> new NoSuchElementException("Event not found with id: " + id));
         
         eventRepository.delete(event);
     }

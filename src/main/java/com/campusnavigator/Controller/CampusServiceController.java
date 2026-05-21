@@ -1,9 +1,11 @@
 package com.campusnavigator.Controller;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,7 +20,6 @@ import com.campusnavigator.Service.CampusServiceService;
 
 @RestController
 @RequestMapping("/api/campusservice") // Simplified mapping
-@CrossOrigin
 public class CampusServiceController {
 
     @Autowired
@@ -44,15 +45,23 @@ public class CampusServiceController {
 
     // Update an existing CampusService
     @PutMapping("/{serviceID}")
-    public CampusService updateCampusService(
-            @PathVariable int serviceID, 
+    public ResponseEntity<?> updateCampusService(
+            @PathVariable int serviceID,
             @RequestBody CampusService updatedCampusService) {
-        return campusServiceService.putCampusService(serviceID, updatedCampusService); // Use the correct method name
+        try {
+            return ResponseEntity.ok(campusServiceService.putCampusService(serviceID, updatedCampusService));
+        } catch (NoSuchElementException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+        }
     }
 
     // Delete a CampusService
     @DeleteMapping("/{serviceID}")
-    public String deleteCampusService(@PathVariable int serviceID) {
-        return campusServiceService.deleteCampusService(serviceID);
+    public ResponseEntity<String> deleteCampusService(@PathVariable int serviceID) {
+        try {
+            return ResponseEntity.ok(campusServiceService.deleteCampusService(serviceID));
+        } catch (NoSuchElementException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+        }
     }
 }

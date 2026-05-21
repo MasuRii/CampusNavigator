@@ -3,14 +3,15 @@ package com.campusnavigator.Controller;
 import com.campusnavigator.Service.EventService;
 import com.campusnavigator.Entity.Event;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/event")
-@CrossOrigin(origins = "http://localhost:3000") // Match your React app's URL
 public class EventController {
     @Autowired
     private EventService eventService;
@@ -33,14 +34,22 @@ public class EventController {
     }
 
     @PutMapping("/updateEvent/{id}")
-    public ResponseEntity<Event> updateEvent(@PathVariable Long id, @RequestBody Event eventDetails) {
-        Event updatedEvent = eventService.updateEvent(id, eventDetails);
-        return ResponseEntity.ok(updatedEvent);
+    public ResponseEntity<?> updateEvent(@PathVariable Long id, @RequestBody Event eventDetails) {
+        try {
+            Event updatedEvent = eventService.updateEvent(id, eventDetails);
+            return ResponseEntity.ok(updatedEvent);
+        } catch (NoSuchElementException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+        }
     }
 
     @DeleteMapping("/deleteEvent/{id}")
     public ResponseEntity<Void> deleteEvent(@PathVariable Long id) {
-        eventService.deleteEvent(id);
-        return ResponseEntity.ok().build();
+        try {
+            eventService.deleteEvent(id);
+            return ResponseEntity.ok().build();
+        } catch (NoSuchElementException ex) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
