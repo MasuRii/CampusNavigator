@@ -5,6 +5,8 @@
 ![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
+<img width="1600" height="900" alt="image" src="https://github.com/user-attachments/assets/d3a0e644-4010-4fc1-ba36-f4eaef81c1f8" />
+
 ## Table of Contents
 
 - [Overview](#overview)
